@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// User model to handle authentication and user roles
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  username  String
+  password  String
+  role      UserRole   @default(BUYER)   // Role: Buyer, Lender, Property Owner
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  mortgageRequests   MortgageRequest[]  // One user can have multiple mortgage requests (buyer)
+  properties         Property[]         // One user can own multiple properties (owner)
+  payments           Payment[]          // Track payments made by a user (buyer)
+}
+
+// Enum for different user roles
+enum UserRole {
+  BUYER
+  LENDER
+  PROPERTY_OWNER
+}
+
+// MortgageRequest model to track mortgage requests made by buyers
+model MortgageRequest {
+  id              Int        @id @default(autoincrement())
+  propertyId      String     // Unique ID of the property being mortgaged
+  loanAmount      Float      // Loan amount requested
+  repaymentPeriod Int        // Repayment period in months
+  status          MortgageStatus @default(PENDING)  // Status of the mortgage request
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  userId          Int        // Foreign key to the user (buyer)
+  user            User       @relation(fields: [userId], references: [id])
+  payments        Payment[]  // Payments related to this mortgage request
+  repaymentSchedule RepaymentSchedule[]  // Repayment schedule for the mortgage
+}
+
+// Enum for different mortgage request statuses
+enum MortgageStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Payment model to track payments made towards a mortgage
+model Payment {
+  id              Int      @id @default(autoincrement())
+  amount          Float    // Payment amount (in Satoshis)
+  paymentDate     DateTime @default(now())
+  transactionHash String   // Blockchain transaction hash
+  createdAt       DateTime @default(now())
+
+  // Relations
+  mortgageRequestId Int     // Foreign key to the mortgage request
+  mortgageRequest   MortgageRequest @relation(fields: [mortgageRequestId], references: [id])
+  userId           Int     // Foreign key to the user (buyer making the payment)
+  user             User    @relation(fields: [userId], references: [id])
+}
+
+// Property model to track properties being mortgaged
+model Property {
+  id          Int      @id @default(autoincrement())
+  propertyId  String   @unique  // Unique identifier for the property (token ID)
+  titleLocked Boolean  @default(false)  // Whether the title token is locked
+  createdAt   DateTime @default(now())
+
+  // Relations
+  ownerId     Int      // Foreign key to the user (owner)
+  owner       User     @relation(fields: [ownerId], references: [id])
+}
+
+// RepaymentSchedule model to track individual payments and their due dates
+model RepaymentSchedule {
+  id              Int      @id @default(autoincrement())
+  amountDue       Float    // Amount due for each installment
+  dueDate         DateTime // Due date for the installment
+  status          PaymentStatus @default(PENDING)  // Status of the repayment (pending/paid/overdue)
+  
+  // Relations
+  mortgageRequestId Int     // Foreign key to the mortgage request
+  mortgageRequest   MortgageRequest @relation(fields: [mortgageRequestId], references: [id])
+}
+
+// Enum for repayment status
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
