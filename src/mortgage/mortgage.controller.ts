@@ -29,8 +29,8 @@ export class MortgageRequestController {
   @Get('pending')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Check pending mortgage requests' })
-  @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
+  @ApiOperation({ summary: 'Review pending mortgage requests for approval or rejection' })
+  @ApiResponse({ status: 201, description: 'Reviewing the pending mortgage requests.' })
   async getPendingRequests(@Query('lenderId') lenderId: number) {
     const pendingRequests = await this.mortgageService.getPendingRequests(lenderId);
     return pendingRequests;
@@ -40,7 +40,7 @@ export class MortgageRequestController {
   @Post('approve/:requestId')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Check pending mortgage requests' })
+  @ApiOperation({ summary: 'Approve pending mortgage request(s)' })
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async approveMortgageRequest(
     @Param('requestId') requestId: number,
@@ -53,7 +53,7 @@ export class MortgageRequestController {
   @Post('reject/:requestId')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Check pending mortgage requests' })
+  @ApiOperation({ summary: 'Reject pending mortgage request(s)' })
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async rejectMortgageRequest(
     @Param('requestId') requestId: number,

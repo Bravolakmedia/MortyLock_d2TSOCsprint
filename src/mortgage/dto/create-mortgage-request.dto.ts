@@ -20,7 +20,7 @@ export class CreateMortgageRequestDto {
   loanAmount: number;
   
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty({ message: 'Enter your Repayment Period in number of months.'})
   @Min(1)
   repaymentPeriod: number;  // Could be a number if it's in months.
