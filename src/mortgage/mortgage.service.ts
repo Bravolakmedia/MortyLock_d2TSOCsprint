@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '..prisma.service';
 import { CreateMortgageRequestDto } from './dto/create-mortgage-request.dto';
 import * as nodemailer from 'nodemailer';
 

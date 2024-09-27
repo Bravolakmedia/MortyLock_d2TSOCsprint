@@ -2,7 +2,7 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from '../user/user.service'; // Import UserService to handle user database interactions
-import { CreateUserDto } from 'src/user/create-user.dto'; // Assuming you have a CreateUserDto for registration
+import { CreateUserDto } from '../user/create-user.dto'; // Assuming you have a CreateUserDto for registration
 
 @Injectable()
 export class AuthService {
