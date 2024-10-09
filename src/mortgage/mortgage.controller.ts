@@ -3,6 +3,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MortgageService } from './mortgage.service';
 import { CreateMortgageRequestDto } from './dto/create-mortgage-request.dto';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { GetUser } from '../user/decorators/user.decorator';
 
 @ApiTags('Mortgage Requests')
 @Controller('api/mortgage')
@@ -44,9 +45,9 @@ export class MortgageRequestController {
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async approveMortgageRequest(
     @Param('requestId') requestId: number,
-    @Body('lenderId') lenderId: number,
+    @GetUser() user: any, // Extracts user from JWT,
   ) {
-    return this.mortgageService.approveRequest(lenderId, requestId);
+    return this.mortgageService.approveRequest(user.userId, requestId);
   }
 
   // Reject mortgage request
@@ -57,8 +58,8 @@ export class MortgageRequestController {
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async rejectMortgageRequest(
     @Param('requestId') requestId: number,
-    @Body('lenderId') lenderId: number,
+    @GetUser() user: any, // Extracts user from JWT,
   ) {
-    return this.mortgageService.rejectRequest(lenderId, requestId);
+    return this.mortgageService.rejectRequest(user.userId, requestId);
   }
 }

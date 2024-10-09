@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateMortgageRequestDto } from './dto/create-mortgage-request.dto';
 import * as nodemailer from 'nodemailer';
@@ -65,10 +65,19 @@ export class MortgageService {
 
   // Approve a mortgage request
   async approveRequest(lenderId: number, requestId: number) {
-    console.log(`Lender ${lenderId} approving request ${requestId}`);
-  
-    if (!requestId || !lenderId) {
-      throw new Error('Lender ID or Request ID is missing');
+    // Verify lender's role
+    const lender = await this.prisma.user.findUnique({ where: { id: lenderId } });
+    if (!lender || lender.role !== 'LENDER') {
+      throw new UnauthorizedException('Only lenders can approve mortgage requests');
+    }
+
+    // Check if the mortgage request exists
+    const mortgageRequest = await this.prisma.mortgageRequest.findUnique({ where: { id: requestId } });
+    if (!mortgageRequest) {
+      throw new NotFoundException('Mortgage request not found');
+    }
+    if (mortgageRequest.status !== 'PENDING') {
+      throw new BadRequestException('Only pending requests can be approved');
     }
   
     // Update the mortgage request status to 'APPROVED'
@@ -76,7 +85,7 @@ export class MortgageService {
       where: { id: requestId },
       data: { status: 'APPROVED' },
     });
-  
+
     return {
       requestId: updatedRequest.id,
       status: updatedRequest.status,
@@ -85,10 +94,19 @@ export class MortgageService {
   
   // Reject a mortgage request
   async rejectRequest(lenderId: number, requestId: number) {
-    console.log(`Lender ${lenderId} rejecting request ${requestId}`);
+    // Verify lender's role
+    const lender = await this.prisma.user.findUnique({ where: { id: lenderId } });
+    if (!lender || lender.role !== 'LENDER') {
+      throw new UnauthorizedException('Only lenders can reject mortgage requests');
+    }
 
-    if (!requestId || !lenderId) {
-      throw new Error('Lender ID or Request ID is missing');
+    // Check if the mortgage request exists
+    const mortgageRequest = await this.prisma.mortgageRequest.findUnique({ where: { id: requestId } });
+    if (!mortgageRequest) {
+      throw new NotFoundException('Mortgage request not found');
+    }
+    if (mortgageRequest.status !== 'PENDING') {
+      throw new BadRequestException('Only pending requests can be rejected');
     }
 
     // Update the mortgage request status to 'REJECTED'
