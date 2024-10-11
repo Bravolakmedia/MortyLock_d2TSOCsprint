@@ -5,6 +5,7 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MortgageService {
+  
   constructor(private prisma: PrismaService) {}
 
   // Create a new mortgage request

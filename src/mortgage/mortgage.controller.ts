@@ -47,6 +47,7 @@ export class MortgageRequestController {
     @Param('requestId') requestId: number,
     @GetUser() user: any, // Extracts user from JWT,
   ) {
+    console.log('Extracted user:', user);
     return this.mortgageService.approveRequest(user.userId, requestId);
   }
 
