@@ -45,10 +45,11 @@ export class MortgageRequestController {
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async approveMortgageRequest(
     @Param('requestId') requestId: number,
-    @GetUser() user: any, // Extracts user from JWT,
+    @GetUser('userId') userId: number  // Extracts user from JWT,
   ) {
-    console.log('Extracted user:', user);
-    return this.mortgageService.approveRequest(user.userId, requestId);
+  
+    console.log('Extracted user:', userId);
+    return this.mortgageService.approveRequest(userId, requestId);
   }
 
   // Reject mortgage request
@@ -59,8 +60,8 @@ export class MortgageRequestController {
   @ApiResponse({ status: 201, description: 'Review the pending mortgage requests.' })
   async rejectMortgageRequest(
     @Param('requestId') requestId: number,
-    @GetUser() user: any, // Extracts user from JWT,
+    @GetUser('userId') userId: number // Extracts user from JWT,
   ) {
-    return this.mortgageService.rejectRequest(user.userId, requestId);
+    return this.mortgageService.rejectRequest(userId, requestId);
   }
 }
