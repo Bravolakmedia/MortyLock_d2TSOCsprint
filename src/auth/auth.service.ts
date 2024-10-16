@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from '../user/user.service'; // Import UserService to handle user database interactions
@@ -17,14 +17,18 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user; // Omit password from result
-      return { userId: result.id, email: result.email };
+      return { userId: user.id, email: user.email };
     }
 
     return null; // Return null if validation fails
   }
 
   // User login method
-  async login(user: any) {
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password); // Validate user and get user details
+  if (!user) {
+    throw new UnauthorizedException(); // Handle invalid login
+  }
     console.log(user); // Log to check the user object
     const payload = { userId: user.userId, email: user.email }; // Use user.id, assuming that's the unique identifier
     return {
