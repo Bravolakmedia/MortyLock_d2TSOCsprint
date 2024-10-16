@@ -25,7 +25,8 @@ export class AuthService {
 
   // User login method
   async login(user: any) {
-    const payload = { userId: user.id, email: user.email }; // Use user.id, assuming that's the unique identifier
+    console.log(user); // Log to check the user object
+    const payload = { sub: user.id, email: user.email }; // Use user.id, assuming that's the unique identifier
     return {
       access_token: this.jwtService.sign(payload), // Generate JWT token
     };
