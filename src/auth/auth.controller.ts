@@ -28,7 +28,7 @@ export class AuthController {
   if (!user) {
     throw new UnauthorizedException(); // Handle invalid login
   }
-  return this.authService.login; // Now pass the user to the login method
+  return this.authService.login(user); // Now pass the user to the login method
   }
 }
 
