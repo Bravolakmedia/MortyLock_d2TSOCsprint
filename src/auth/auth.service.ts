@@ -16,8 +16,8 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(email); // Fetch user from DB
 
     if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, id: userId, ...result } = user; // Omit password from result
-      return { ...result, userId };
+      const { password, ...result } = user; // Omit password from result
+      return { userId: result.id, email: result.email };
     }
 
     return null; // Return null if validation fails
@@ -26,7 +26,7 @@ export class AuthService {
   // User login method
   async login(user: any) {
     console.log(user); // Log to check the user object
-    const payload = { sub: user.id, email: user.email }; // Use user.id, assuming that's the unique identifier
+    const payload = { userId: user.userId, email: user.email }; // Use user.id, assuming that's the unique identifier
     return {
       access_token: this.jwtService.sign(payload), // Generate JWT token
     };
