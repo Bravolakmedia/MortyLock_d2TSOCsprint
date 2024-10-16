@@ -3,17 +3,22 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from '../user/user.service'; // Import UserService to handle user database interactions
 import { CreateUserDto } from '../user/create-user.dto'; // Assuming you have a CreateUserDto for registration
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService, // Inject UserService for database operations
   ) {}
 
   // Validate user by comparing password
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.userService.findUserByEmail(email); // Fetch user from DB
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, password: true },
+    }); // Fetch user from DB
 
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user; // Omit password from result
