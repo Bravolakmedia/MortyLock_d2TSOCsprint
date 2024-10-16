@@ -12,12 +12,12 @@ export class AuthService {
   ) {}
 
   // Validate user by comparing password
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findUserByEmail(email); // Fetch user from DB
 
-    if (user && (await bcrypt.compare(pass, user.password))) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user; // Omit password from result
-      return { userId: result.id, email: result.email };
+      return result;
     }
 
     return null; // Return null if validation fails
