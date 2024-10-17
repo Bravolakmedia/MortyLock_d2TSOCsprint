@@ -26,11 +26,11 @@ export class AuthService {
   // User login method
   async login(email: string, password: string) {
     const user = await this.validateUser(email, password); // Validate user and get user details
-  if (!user) {
+    if (!user) {
     throw new UnauthorizedException(); // Handle invalid login
   }
     
-    const payload = { email: user.email, sub: user.id, role: user.role  }; // Use user.id, assuming that's the unique identifier
+    const payload = { email: user.email, sub: user.id, role: user.role }; // Use user.id, assuming that's the unique identifier
     console.log(user); // Log to check the user object
     return {
       access_token: this.jwtService.sign(payload), // Generate JWT token

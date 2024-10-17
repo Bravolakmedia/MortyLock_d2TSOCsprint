@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, NotFoundException, BadRequestExcepti
 import { PrismaService } from '../database/prisma.service';
 import { CreateMortgageRequestDto } from './dto/create-mortgage-request.dto';
 import * as nodemailer from 'nodemailer';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class MortgageService {
@@ -68,7 +69,7 @@ export class MortgageService {
   async approveRequest(lenderId: number, requestId: number) {
     // Verify lender's role
     const lender = await this.prisma.user.findUnique({ where: { id: lenderId } });
-    if (!lender || lender.role !== 'LENDER') {
+    if (lender.role !== UserRole.LENDER) {
       throw new UnauthorizedException('Only lenders can approve mortgage requests');
     }
 
@@ -97,7 +98,7 @@ export class MortgageService {
   async rejectRequest(lenderId: number, requestId: number) {
     // Verify lender's role
     const lender = await this.prisma.user.findUnique({ where: { id: lenderId } });
-    if (!lender || lender.role !== 'LENDER') {
+    if (lender.role !== UserRole.LENDER) {
       throw new UnauthorizedException('Only lenders can reject mortgage requests');
     }
 
