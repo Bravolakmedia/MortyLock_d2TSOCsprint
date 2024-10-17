@@ -29,8 +29,9 @@ export class AuthService {
   if (!user) {
     throw new UnauthorizedException(); // Handle invalid login
   }
+    
+    const payload = { email: user.email, sub: user.id, role: user.role  }; // Use user.id, assuming that's the unique identifier
     console.log(user); // Log to check the user object
-    const payload = { sub: user.id, email: user.email }; // Use user.id, assuming that's the unique identifier
     return {
       access_token: this.jwtService.sign(payload), // Generate JWT token
     };
