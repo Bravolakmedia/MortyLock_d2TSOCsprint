@@ -13,7 +13,7 @@ export class UserService {
   async findUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },  // Email is the unique field here
-      select: { id: true, email: true, password: true },
+      select: { id: true, email: true, password: true, role: true },
     });
   }
 
