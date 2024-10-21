@@ -7,7 +7,7 @@ require('dotenv').config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  app.enableCors({ origin: 'https://morty-lock-d2-tso-csprint-flax.vercel.app/' })
+  app.enableCors({ origin: 'https://morty-lock-d2-tso-csprint-flax.vercel.app' })
   app.useGlobalPipes(new ValidationPipe())
   const config = new DocumentBuilder()
     .setTitle('MortyLock Mortgage Management API')
