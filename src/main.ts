@@ -9,8 +9,9 @@ async function bootstrap() {
   
   app.enableCors({
     origin: 'https://morty-lock-d2-tso-csprint-flax.vercel.app',
-    methods: 'GET,POST,PUT,DELETE', // Specify methods if needed
-    credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
   });
   app.useGlobalPipes(new ValidationPipe())
   const config = new DocumentBuilder()
