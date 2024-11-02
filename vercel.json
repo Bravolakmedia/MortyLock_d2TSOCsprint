@@ -16,7 +16,7 @@
       {
         "src": "/(.*)",
         "dest": "src/main.ts",
-        "methods": ["GET", "POST", "PUT", "DELETE"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "headers": {
           "Access-Control-Allow-Origin": "https://morty-lock-d2-tso-csprint-flax.vercel.app",
           "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
